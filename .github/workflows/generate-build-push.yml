@@ -32,4 +32,5 @@ jobs:
         name: Build & Publish Docker images
         env:
           PUBLIC_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/minecraft
+          ASYNC_BUILD: false
         run: /usr/bin/env bash publish.sh
