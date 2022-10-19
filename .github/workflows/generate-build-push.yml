@@ -1,0 +1,35 @@
+
+name: ci
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Generate Dockerfile
+        env:
+          JAVA_VERSION: (8 11 17)
+          MCDR_VERSION: 2.5
+        run: /usr/bin/env bash generater.sh
+      -
+        name: Build & Publish Docker images
+        env:
+          PUBLIC_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/minecraft
+        run: /usr/bin/env bash publish.sh

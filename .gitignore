@@ -1,0 +1,9 @@
+
+# Mac OS
+.DS_Store
+
+# tmps
+*.tmp
+tmp.*
+.tmp.*
+*.tmp.Dockerfile
