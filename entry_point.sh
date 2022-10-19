@@ -16,10 +16,6 @@ echo "Exec command: $COMMAND $EXE"
 echo
 
 function runner(){
-	if ! "$INITED"; then
-		echo "Not inited, please use command 'init' for init"
-		exit 1
-	fi
 	exec $COMMAND $EXE
 }
 
@@ -48,7 +44,13 @@ if ! [ -n "$_CMD" ]; then
 fi
 
 case "$_CMD" in
-	run) runner ;;
+	run) 
+		if ! "$INITED"; then
+			echo "Not inited, please use command 'init' for init"
+			exit 1
+		fi
+		runner
+		;;
 	init) initer ;;
 	*)
 		echo "Unknown command '$_CMD'"
