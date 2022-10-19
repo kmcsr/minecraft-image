@@ -32,7 +32,7 @@ jobs:
         env:
           JAVA_VERSION: (8 11 17)
           MCDR_VERSION: 2.5
-        run: /usr/bin/env bash generater.sg
+        run: /usr/bin/env bash generater.sh
       -
         name: Build & Publish Docker images
         env:
