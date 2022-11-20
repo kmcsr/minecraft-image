@@ -15,8 +15,8 @@ echo "Workspace: $(pwd)"
 echo "Exec command: $COMMAND $EXE"
 echo
 
-function runner(){
-	exec $COMMAND $EXE
+function exec_command(){
+	exec "$COMMAND" $EXE
 }
 
 function initer(){
@@ -36,11 +36,11 @@ _CMD=$2
 
 if ! [ -n "$_CMD" ]; then
 	if ! "$INITED"; then
-		echo "Not inited, running initer"
+		echo "Not inited, run initer"
 		initer || exit $?
-		echo "Just inited, running runner"
+		echo "Just inited, executing command "
 	fi
-	runner
+	exec_command
 fi
 
 case "$_CMD" in
@@ -49,9 +49,18 @@ case "$_CMD" in
 			echo "Not inited, please use command 'init' for init"
 			exit 1
 		fi
-		runner
+		exec_command
 		;;
-	init) initer ;;
+	init)
+		initer
+		;;
+	shell)
+		echo 'Enterning `/bin/sh`'
+		echo
+		echo 'Hint: you can use ctrl+p+q to detach this container'
+		echo
+		exec /bin/sh
+		;;
 	*)
 		echo "Unknown command '$_CMD'"
 		exit 2
