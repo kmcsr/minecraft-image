@@ -48,7 +48,7 @@ EOF
 function gen_mcdr(){
 	_JAVA=$1
 	[ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
-  _FILE="java${_JAVA}-mcdr${DOCKERFILE_SUFFIX}"
+  _FILE="java${_JAVA}-mcdr${MCDR_VERSION}${DOCKERFILE_SUFFIX}"
   echo ">>> generating ${_FILE}"
 	cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1

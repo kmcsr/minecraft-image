@@ -3,9 +3,11 @@
 read -p 'Do you want to init mcdreforged by `python3 -m mcdreforged init` (Y/n)' -s -n1 ans
 echo
 
-if [ "$ans" = Y ]; then
-	echo "Initing mcdreforged..."
+if [ "$ans" = Y ] || [ "$ans" = y ]; then
+	echo 'Initing mcdreforged...'
 	python3 -m mcdreforged init || exit $?
+else
+	echo 'Init mcdreforged canceled'
 fi
 
 echo

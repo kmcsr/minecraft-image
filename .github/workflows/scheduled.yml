@@ -1,0 +1,32 @@
+
+name: scheduled-check-update
+
+on:
+  workflow_dispatch:
+    #
+  schedule:
+    - cron: '0 0,3,6,9,12,15,18,21 * * *'
+
+jobs:
+  timed_update:
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Action Checkout
+        uses: actions/checkout@v3
+      -
+        name: Run script
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const script = require('./.github/script/timed_update.js')
+            await script({github, context})
+      - 
+        name: Commit
+        run: |
+          git config user.name github-actions && \
+          git config user.email github-actions@github.com && \
+          git add . && \
+          git commit -m 'github action generated' && \
+          git push && \
+          echo 'Done'

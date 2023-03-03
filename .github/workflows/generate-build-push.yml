@@ -1,5 +1,5 @@
 
-name: ci
+name: generate-build-publish
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
       - 'master'
 
 jobs:
-  docker:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - 
@@ -28,14 +28,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Read MCDR version
+        run: |
+          read v <'.MCDR_version_cache.txt'
+          [ -n "$v" ] || v='2'
+          echo "MCDR_VERSION=$v" >> $GITHUB_ENV
+      -
         name: Generate Dockerfile
         env:
           JAVA_VERSION: (8 11 17)
-          MCDR_VERSION: 2.6
+          # MCDR_VERSION: 2
         run: /usr/bin/env bash generater.sh
       -
         name: Build & Publish Docker images
         env:
           PUBLIC_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/minecraft
-          ASYNC_BUILD: false
+          ASYNC_BUILD: true
         run: /usr/bin/env bash publish.sh
