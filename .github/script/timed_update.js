@@ -19,9 +19,9 @@ module.exports = async ({github, context}) => {
 	var ver = res.data.tag_name;
 	if(ver[0] === 'v'){
 		ver = ver.substr(1);
-		if(ver !== version){
+		if(ver !== version.trim()){
 			try{
-				await fs.writeFile(VERSION_CACHE_PATH, content);
+				await fs.writeFile(VERSION_CACHE_PATH, ver + '\n');
 			}catch(e){
 				console.error('Unable to write version to cache file:', e);
 			}
