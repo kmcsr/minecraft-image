@@ -11,7 +11,7 @@ module.exports = async ({github, context}) => {
 	}catch(e){
 		console.error('Unable to read version from cache file:', e);
 	}
-	var res = await github.requests('https://api.github.com/repos/Fallen-Breath/MCDReforged/releases/latest');
+	var res = await github.request('https://api.github.com/repos/Fallen-Breath/MCDReforged/releases/latest');
 	if(res.status != 200){
 		console.error(`Unexpect status ${res.status}`);
 		return;
