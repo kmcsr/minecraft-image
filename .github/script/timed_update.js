@@ -5,11 +5,13 @@ const VERSION_CACHE_PATH = '.MCDR_version_cache.txt';
 
 module.exports = async ({github, context}) => {
 	console.log('Start checking');
-	var version = null;
+	var version;
 	try{
 		version = await fs.readFile(VERSION_CACHE_PATH);
+		version = version.toString('utf-8');
 	}catch(e){
 		console.error('Unable to read version from cache file:', e);
+		version = null;
 	}
 	console.log('Cached version:', version)
 	var res = await github.request('https://api.github.com/repos/Fallen-Breath/MCDReforged/releases/latest');
