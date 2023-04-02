@@ -12,7 +12,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - 
+      -
         name: Action Checkout
         uses: actions/checkout@v3
       -

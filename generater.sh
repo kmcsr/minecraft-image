@@ -77,7 +77,7 @@ WORKDIR /minecraft
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_mcdr.sh /root/init.sh
 
-ENV COMMAND='python3 -m mcdreforged'
+ENV COMMAND='/usr/bin/env python3 -m mcdreforged'
 
 STOPSIGNAL SIGINT
 
