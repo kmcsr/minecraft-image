@@ -13,7 +13,7 @@ The docker repository is at <https://hub.docker.com/r/craftmine/minecraft>
 
 1. Make sure there is a [docker](https://www.docker.com) on the server.
 
-2. Use tag to pull the environment that you want: `docker pull craftmine/minecraft:java<java_version>` _(for MCDR, it's `craftmine/minecraft:java<java_version>-mcdr`)_
+2. Use tag to pull the environment that you want: `docker pull craftmine/minecraft:java<java_version>` _(for MCDR, it's `craftmine/minecraft:java<java_version>-mcdr<mcdr_version>`)_
 
 3. Use `docker run` start the server with a volume: `docker run -it --rm -v "my-minecraft-server-volume":"/minecraft" craftmine/minecraft:java17`
 
