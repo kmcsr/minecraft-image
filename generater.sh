@@ -35,8 +35,8 @@ WORKDIR /minecraft
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_vanilla.sh /root/init.sh
 
-ENV COMMAND='java -jar'
-ENV EXE=minecraft.jar
+ENV COMMAND='/usr/bin/env java -jar'
+ENV ARGS=minecraft.jar
 
 STOPSIGNAL SIGINT
 
@@ -65,7 +65,7 @@ RUN apk add --no-cache --virtual .install-deps \\
     linux-headers \\
     make \\
   && \\
-  pip3 install mcdreforged~=${MCDR_VERSION} && \\
+  pip3 install 'mcdreforged~=${MCDR_VERSION}'' && \\
   python3 --version && \\
   apk del --no-network .install-deps;
 
@@ -78,6 +78,7 @@ COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_mcdr.sh /root/init.sh
 
 ENV COMMAND='/usr/bin/env python3 -m mcdreforged'
+ENV ARGS=
 
 STOPSIGNAL SIGINT
 
@@ -96,6 +97,7 @@ function generate(){
 echo
 echo '==> Clearing old tmp dockerfiles'
 rm *"${DOCKERFILE_SUFFIX}"
+echo
 
 for j in ${JAVA_VERSIONS[@]}; do
   generate $j

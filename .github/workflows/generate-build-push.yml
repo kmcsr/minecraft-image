@@ -31,7 +31,8 @@ jobs:
         name: Read MCDR version
         run: |
           read v <'.MCDR_version_cache.txt'
-          ([ -n "$v" ] || v='2')
+          [ -n "$v" ] || v='2'
+          echo "MCDR_VERSION=$v"
           echo "MCDR_VERSION=$v" >> $GITHUB_ENV
       -
         name: Generate Dockerfile

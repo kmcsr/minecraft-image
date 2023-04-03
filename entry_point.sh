@@ -8,15 +8,34 @@ if [ -f .inited ]; then
 	INITED=true
 fi
 
-INIT_COMMAND=$1
+INIT_COMMAND="$1"
 
 echo
 echo "Workspace: $(pwd)"
-echo "Exec command: $COMMAND $EXE"
+echo "ENV COMMAND=$COMMAND"
+echo "ENV ARGS=$ARGS"
 echo
 
+# TODO: try make a init system, or use one that already exists in apk
+# function _broadcast_signal(){
+# 	sig=$1
+# 	kill "-$sig" "-1" # Cannot use gid=1 here, sincu some process must be killed by their parent (such as mcdreforged)
+# 	wait "$pid"
+# }
+# function _broadcast_signals(){
+# 	for sig; do
+# 		trap "_broadcast_signal $sig"
+# 	done
+# }
+# function trap_and_wait(){
+# 	"$@" &
+# 	pid=$!
+# 	_forward_signals SIGHUP SIGINT SIGQUIT SIGILL SIGABRT SIGTERM SIGSTOP
+# 	wait $pid
+# }
+
 function exec_command(){
-	exec "$COMMAND" $EXE
+	exec "$COMMAND" $ARGS
 }
 
 function initer(){
@@ -25,9 +44,9 @@ function initer(){
 	fi
 	echo
 	echo "Running init command"
-	$INIT_COMMAND || exit $?
+	"$INIT_COMMAND" || exit $?
 	if ! "$INITED"; then
-		echo "Touching .inited"
+		echo "Creating .inited"
 		touch .inited
 	fi
 }
@@ -38,7 +57,7 @@ if ! [ -n "$_CMD" ]; then
 	if ! "$INITED"; then
 		echo "Not inited, run initer"
 		initer || exit $?
-		echo "Just inited, executing command "
+		echo "Just inited, executing command '$COMMAND $ARGS'"
 	fi
 	exec_command
 fi
@@ -54,7 +73,7 @@ case "$_CMD" in
 	init)
 		initer
 		;;
-	shell)
+	sh | shell)
 		echo 'Enterning `/bin/sh`'
 		echo
 		echo 'Hint: you can use ctrl+p+q to detach this container'
@@ -63,6 +82,12 @@ case "$_CMD" in
 		;;
 	*)
 		echo "Unknown command '$_CMD'"
+		echo
+		echo 'Commands:'
+		echo '  run: run the server with env `COMMAND` and `ARGS`'
+		echo '  init: initialize the server with default initializer'
+		echo '  sh, shell: enter the shell mode'
+		echo
 		exit 2
 		;;
 esac

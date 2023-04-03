@@ -4,18 +4,20 @@ read -p 'Do you want to init mcdreforged by `python3 -m mcdreforged init` (Y/n)'
 echo
 
 if [ "$ans" = Y ] || [ "$ans" = y ]; then
-	echo 'Initing mcdreforged...'
+	echo 'Initializing mcdreforged...'
 	python3 -m mcdreforged init || exit $?
 else
-	echo 'Init mcdreforged canceled'
+	echo 'Canceled to initialize mcdreforged'
 fi
 
 echo
 echo 'Please copy/download your minecraft server'
 echo '  and then restart this container'
 echo
-echo 'Hint: you can use ctrl+p+q to detach this container'
-echo 'Hint: Use `docker copy` to copy files between the host and contaniers'
+echo 'Hint: you can use Ctrl+P+Q to detach this container'
+echo '    | Use `docker copy` in the host environment to copy files between the host and contaniers,'
+echo '    |   and for more helps, please run `docker copy --help` in the host environment.'
+echo '    | Use `wget -O /minecraft/server/minecraft_server.jar <server jar link>` to download the server'
 echo
 
 exec /bin/sh
