@@ -35,7 +35,7 @@ echo
 # }
 
 function exec_command(){
-	exec "${COMMAND[@]}" "${ARGS[@]}"
+	exec $COMMAND $ARGS
 }
 
 function initer(){
