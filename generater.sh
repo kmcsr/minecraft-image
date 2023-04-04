@@ -25,6 +25,8 @@ function gen_vanilla(){
 	cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1
 
+FROM craftmine/server-installer:latest AS server_installer
+
 FROM alpine:latest
 
 RUN apk add --no-cache openjdk${_JAVA}-jre && \\
@@ -32,10 +34,11 @@ RUN apk add --no-cache openjdk${_JAVA}-jre && \\
 
 WORKDIR /minecraft
 
+COPY --from=server_installer /usr/local/bin/minecraft_installer /usr/local/bin/minecraft_installer
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_vanilla.sh /root/init.sh
 
-ENV COMMAND='/usr/bin/env java -jar'
+ENV COMMAND=(/usr/bin/env java -jar)
 ENV ARGS=minecraft.jar
 
 STOPSIGNAL SIGINT
@@ -53,6 +56,8 @@ function gen_mcdr(){
 	cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1
 
+FROM craftmine/server-installer:latest AS server_installer
+
 FROM python:${PYTHON_VERSION}-alpine
 
 RUN apk add --no-cache --virtual .install-deps \\
@@ -65,7 +70,7 @@ RUN apk add --no-cache --virtual .install-deps \\
     linux-headers \\
     make \\
   && \\
-  pip3 install 'mcdreforged~=${MCDR_VERSION}'' && \\
+  pip3 install 'mcdreforged~=${MCDR_VERSION}' && \\
   python3 --version && \\
   apk del --no-network .install-deps;
 
@@ -74,10 +79,11 @@ RUN apk add --no-cache openjdk${_JAVA}-jre && \\
 
 WORKDIR /minecraft
 
+COPY --from=server_installer /usr/local/bin/minecraft_installer /usr/local/bin/minecraft_installer
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_mcdr.sh /root/init.sh
 
-ENV COMMAND='/usr/bin/env python3 -m mcdreforged'
+ENV COMMAND=(/usr/bin/env python3 -m mcdreforged)
 ENV ARGS=
 
 STOPSIGNAL SIGINT

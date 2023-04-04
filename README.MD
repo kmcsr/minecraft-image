@@ -26,10 +26,16 @@ The docker repository is at <https://hub.docker.com/r/craftmine/minecraft>
 
 4. Set up your minecraft server **inside** the container
 
-	> Since [minecraft EULA](https://www.minecraft.net/en-us/eula), we can't pack minecraft server. So you should download the server file from it offical website (e.g. <https://www.minecraft.net/en-us/download/server>).
-	- For example, you can download the 1.19.2 server use below command:
+	> Since [Minecraft EULA](https://www.minecraft.net/en-us/eula), we can't pack minecraft server. You can download the server file from minecraft offical API (e.g. <https://www.minecraft.net/en-us/download/server>).
+	- For example, you can download the 1.19.2 server use the command below:
 		```shell
 		wget -O /minecraft/minecraft.jar https://piston-data.mojang.com/v1/objects/f69c284232d7c7580bd89a5a4931c3581eae1378/server.jar
+		```
+	- We also pre-installed [minecraft server installer](https://github.com/kmcsr/server-installer) in newer images. It support install not only vanilla server, but also some popular servers (such as fabric, forge, spigot).
+		Do `minecraft_installer` in the container for more information.
+		Example command (to install latest fabric server for mcdreforged):
+		```shell
+		minecraft_installer -path /minecraft/server/ -name minecraft_server -server fabric -version latest
 		```
 
 5. Sometimes you need to restart the docker containers, but you may just exit the init shell use `exit 0` and the server will be auto start

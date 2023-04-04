@@ -17,7 +17,9 @@ echo
 echo 'Hint: you can use Ctrl+P+Q to detach this container'
 echo '    | Use `docker copy` in the host environment to copy files between the host and contaniers,'
 echo '    |   and for more helps, please run `docker copy --help` in the host environment.'
-echo '    | Use `wget -O /minecraft/server/minecraft_server.jar <server jar link>` to download the server'
+echo
+echo 'Hint: We have pre-installed a minecraft server installer'
+echo '    | Use `minecraft_installer -help` for more info'
 echo
 
 exec /bin/sh

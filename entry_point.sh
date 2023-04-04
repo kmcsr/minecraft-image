@@ -35,7 +35,7 @@ echo
 # }
 
 function exec_command(){
-	exec "$COMMAND" $ARGS
+	exec "${COMMAND[@]}" "${ARGS[@]}"
 }
 
 function initer(){
@@ -44,7 +44,7 @@ function initer(){
 	fi
 	echo
 	echo "Running init command"
-	"$INIT_COMMAND" || exit $?
+	"${INIT_COMMAND[@]}" || exit $?
 	if ! "$INITED"; then
 		echo "Creating .inited"
 		touch .inited

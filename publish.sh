@@ -52,7 +52,7 @@ for _f in "${files[@]}"; do
 					touch .tmp.error
 					exit 1
 				fi
-				echo "[+++] Done"
+				echo "[+++] Done" >&2
 			} 1>"$logf" &
 		else
 			_build_and_push "$fulltag" "$platform" || exit $?
@@ -60,12 +60,23 @@ for _f in "${files[@]}"; do
 	done
 done
 
-echo ">>> waiting works..."
-wait
-if [ -n "$ASYNC_BUILD" ] && [ -f .tmp.error ]; then
-	rm .tmp.error
-	echo "Some error have been happend, please check the console and the logs"
-	exit 1
+if [ -n "$ASYNC_BUILD" ]; then
+	echo ">>> waiting works..."
+	wait
+	if [ -f .tmp.error ]; then
+		rm .tmp.error
+		echo "Some error have been happend, please check the console and the logs"
+		if [ -n "$CI" ]; then # if it's in github action
+			for log in `(ls logs.tmp/*.log)`; do
+				echo
+				echo "================START ${log}================"
+				cat "$log"
+				echo "================END ${log}================"
+				echo
+			done
+		fi
+		exit 1
+	fi
 fi
 
 if [ -n "$ASYNC_BUILD" ] && ! [ -n "$KEEP_TMP_LOGS" ]; then
