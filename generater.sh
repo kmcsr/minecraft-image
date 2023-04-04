@@ -38,7 +38,7 @@ COPY --from=server_installer /usr/local/bin/minecraft_installer /usr/local/bin/m
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_vanilla.sh /root/init.sh
 
-ENV COMMAND=(/usr/bin/env java -jar)
+ENV COMMAND="(/usr/bin/env java -jar)"
 ENV ARGS=minecraft.jar
 
 STOPSIGNAL SIGINT
@@ -83,7 +83,7 @@ COPY --from=server_installer /usr/local/bin/minecraft_installer /usr/local/bin/m
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_mcdr.sh /root/init.sh
 
-ENV COMMAND=(/usr/bin/env python3 -m mcdreforged)
+ENV COMMAND="(/usr/bin/env python3 -m mcdreforged)"
 ENV ARGS=
 
 STOPSIGNAL SIGINT
