@@ -31,7 +31,7 @@ jobs:
           echo "Result: ${{steps.update.outputs.result}}"
           if [[ "${{steps.update.outputs.result}}" == true ]]; then
             git config user.name github-actions && \
-            git config user.email github-actions@github.com && \
+            git config user.email github-actions[bot]@users.noreply.github.com && \
             git add . && \
             git commit -m 'github action generated' && \
             git push && \
