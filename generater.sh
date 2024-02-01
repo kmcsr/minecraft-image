@@ -7,7 +7,7 @@ echo 'Generating Dockerfile suffix:' "${DOCKERFILE_SUFFIX}"
 
 [ -n "$DEFAULT_JAVA" ] || DEFAULT_JAVA=17
 
-[ -n "$PYTHON_VERSION" ] || PYTHON_VERSION=3.10
+[ -n "$PYTHON_VERSION" ] || PYTHON_VERSION=3.11
 
 if ! [ -n "$NO_MCDR" ]; then
   [ -n "$MCDR_VERSION" ] || { echo 'FAULT: You must set the mcdreforged version at `MCDR_VERSION`'; exit 2; }
