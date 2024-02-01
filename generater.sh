@@ -52,6 +52,7 @@ ENV COMMAND="/usr/bin/env java -jar"
 ENV ARGS=minecraft.jar
 
 COPY ./minecraft_installer.tmp /usr/local/bin/minecraft_installer
+RUN chmod 0755 /usr/local/bin/minecraft_installer
 
 STOPSIGNAL SIGINT
 
@@ -91,12 +92,14 @@ RUN apk add --no-cache openjdk${_JAVA}-jre && \\
 
 WORKDIR /minecraft
 
-COPY --from=server_installer /usr/local/bin/minecraft_installer /usr/local/bin/minecraft_installer
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_mcdr.sh /root/init.sh
 
 ENV COMMAND="/usr/bin/env python3 -m mcdreforged"
 ENV ARGS=
+
+COPY ./minecraft_installer.tmp /usr/local/bin/minecraft_installer
+RUN chmod 0755 /usr/local/bin/minecraft_installer
 
 STOPSIGNAL SIGINT
 
