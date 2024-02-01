@@ -6,7 +6,8 @@ echo
 
 DOCKERFILE_SUFFIX=.tmp.Dockerfile
 
-BUILD_PLATFORMS=(linux/amd64)
+BUILD_PLATFORM="linux/amd64"
+
 [ -n "$PUBLIC_PREFIX" ] || { echo 'FAULT: You must have a docker public prefix set by `PUBLIC_PREFIX`'; exit 2; }
 
 files=($(ls *"${DOCKERFILE_SUFFIX}"))
@@ -40,24 +41,23 @@ fi
 for _f in "${files[@]}"; do
 	tag=${_f%"${DOCKERFILE_SUFFIX}"}
 	fulltag=${PUBLIC_PREFIX}:${tag}
-	for platform in "${BUILD_PLATFORMS[@]}"; do
-		echo '================================================================'
-		echo ">>> building: ${fulltag} for ${platform}"
-		echo '================================================================'
-		if [ -n "$ASYNC_BUILD" ]; then
-			logf="$(pwd)/logs.tmp/${tag}-${platform//\//_}.log"
-			{
-				if ! _build_and_push "$fulltag" "$platform"; then
-					echo "Logfile saved at ${logf}" >&2
-					touch .tmp.error
-					exit 1
-				fi
-				echo "[+++] Done" >&2
-			} 1>"$logf" &
-		else
-			_build_and_push "$fulltag" "$platform" || exit $?
-		fi
-	done
+	platform="$BUILD_PLATFORM"
+	echo '================================================================'
+	echo ">>> building: ${fulltag} for ${platform}"
+	echo '================================================================'
+	if [ -n "$ASYNC_BUILD" ]; then
+		logf="$(pwd)/logs.tmp/${tag}-${platform//\//_}.log"
+		{
+			if ! _build_and_push "$fulltag" "$platform"; then
+				echo "Logfile saved at ${logf}" >&2
+				touch .tmp.error
+				exit 1
+			fi
+			echo "[+++] Done" >&2
+		} 1>"$logf" &
+	else
+		_build_and_push "$fulltag" "$platform" || exit $?
+	fi
 done
 
 if [ -n "$ASYNC_BUILD" ]; then

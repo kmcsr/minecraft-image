@@ -17,6 +17,19 @@ fi
 [ -n "${JAVA_VERSIONS[*]}" ] || JAVA_VERSIONS=(8 11 17)
 echo 'Generating Java versions:' "${JAVA_VERSIONS[*]}"
 
+SI_REPO='kmcsr/server-installer'
+function fetchGithubLatestTagForServerInstaller(){
+  prefix="location: https://github.com/$SI_REPO/releases/tag/"
+  location=$(curl -fsSI "https://github.com/$SI_REPO/releases/latest" | grep "$prefix" | tr -d "\r")
+  [ $? = 0 ] || return 1
+  export SI_LATEST_TAG="${location#${prefix}}"
+}
+
+fetchGithubLatestTagForServerInstaller || { echo "Could not fetch the latest tag for $SI_REPO"; exit 1; }
+si_src="https://github.com/$SI_REPO/releases/download/$SI_LATEST_TAG/minecraft_installer-linux-amd64"
+echo "==> Downloading $si_src"
+curl -fL -o "minecraft_installer.tmp" "$si_src" || exit $?
+
 function gen_vanilla(){
 	_JAVA=$1
 	[ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
@@ -25,8 +38,6 @@ function gen_vanilla(){
 	cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1
 
-FROM craftmine/server-installer:latest AS server_installer
-
 FROM alpine:latest
 
 RUN apk add --no-cache openjdk${_JAVA}-jre && \\
@@ -34,12 +45,13 @@ RUN apk add --no-cache openjdk${_JAVA}-jre && \\
 
 WORKDIR /minecraft
 
-COPY --from=server_installer /usr/local/bin/minecraft_installer /usr/local/bin/minecraft_installer
 COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
 COPY ${BASE_DIR}/init_vanilla.sh /root/init.sh
 
 ENV COMMAND="/usr/bin/env java -jar"
 ENV ARGS=minecraft.jar
+
+COPY ./minecraft_installer.tmp /usr/local/bin/minecraft_installer
 
 STOPSIGNAL SIGINT
 
