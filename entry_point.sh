@@ -43,8 +43,8 @@ function initer(){
 		echo "WARN: This containter already inited"
 	fi
 	echo
-	echo "Running init command"
-	"${INIT_COMMAND[@]}" || exit $?
+	echo "Running init command $INIT_COMMAND"
+	"$INIT_COMMAND" || exit $?
 	if ! "$INITED"; then
 		echo "Creating .inited"
 		touch .inited
@@ -63,7 +63,7 @@ if ! [ -n "$_CMD" ]; then
 fi
 
 case "$_CMD" in
-	run) 
+	run)
 		if ! "$INITED"; then
 			echo "Not inited, please use command 'init' for init"
 			exit 1
