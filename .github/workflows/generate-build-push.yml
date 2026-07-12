@@ -37,7 +37,7 @@ jobs:
       -
         name: Generate Dockerfile
         env:
-          JAVA_VERSION: (8 11 17)
+          JAVA_VERSION: (8 11 17 25)
           # MCDR_VERSION: 2
         run: /usr/bin/env bash generater.sh
       -
