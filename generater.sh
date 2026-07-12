@@ -14,7 +14,7 @@ if ! [ -n "$NO_MCDR" ]; then
   echo 'Generating mcdr version:' "v${MCDR_VERSION}"
 fi
 
-[ -n "${JAVA_VERSIONS[*]}" ] || JAVA_VERSIONS=(8 11 17)
+[ -n "${JAVA_VERSIONS[*]}" ] || JAVA_VERSIONS=(8 11 17 25)
 echo 'Generating Java versions:' "${JAVA_VERSIONS[*]}"
 
 SI_REPO='kmcsr/server-installer'
