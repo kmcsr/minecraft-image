@@ -30,7 +30,7 @@ si_src="https://github.com/$SI_REPO/releases/download/$SI_LATEST_TAG/minecraft_i
 echo "==> Downloading $si_src"
 curl -fL -o "minecraft_installer.tmp" "$si_src" || exit $?
 
-function gen_vanilla(){
+function gen_vanilla_alpine(){
 	_JAVA=$1
 	[ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
   _FILE="java${_JAVA}${DOCKERFILE_SUFFIX}"
@@ -61,12 +61,12 @@ CMD []
 EOF
 }
 
-function gen_mcdr(){
-	_JAVA=$1
-	[ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
+function gen_mcdr_alpine(){
+  _JAVA=$1
+  [ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
   _FILE="java${_JAVA}-mcdr${MCDR_VERSION}${DOCKERFILE_SUFFIX}"
   echo ">>> generating ${_FILE}"
-	cat >"$_FILE" <<EOF
+  cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1
 
 FROM craftmine/server-installer:latest AS server_installer
@@ -108,10 +108,52 @@ CMD []
 EOF
 }
 
+function gen_mcdr_ubuntu(){
+  _JAVA=$1
+  [ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
+  _FILE="java${_JAVA}-mcdr${MCDR_VERSION}${DOCKERFILE_SUFFIX}"
+  echo ">>> generating ${_FILE}"
+  cat >"$_FILE" <<EOF
+# syntax=docker/dockerfile:1
+
+FROM craftmine/server-installer:latest AS server_installer
+
+FROM python:${PYTHON_VERSION}-alpine
+
+RUN apt-get update
+RUN apt-get install -y \\
+    python3-full \\
+    python3-pip \\
+  && \\
+  pip3 install --break-system-packages 'mcdreforged~=${MCDR_VERSION}' && \\
+  python3 --version
+
+RUN apt-get install -y openjdk-${_JAVA}-jre && \\
+  java -version
+
+WORKDIR /minecraft
+
+COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
+COPY ${BASE_DIR}/init_mcdr.sh /root/init.sh
+
+ENV COMMAND="/usr/bin/env python3 -m mcdreforged"
+ENV ARGS=
+
+COPY ./minecraft_installer.tmp /usr/local/bin/minecraft_installer
+RUN chmod 0755 /usr/local/bin/minecraft_installer
+
+STOPSIGNAL SIGINT
+
+ENTRYPOINT ["/root/entry_point.sh", "/root/init.sh"]
+CMD []
+EOF
+}
+
 function generate(){
   gen_vanilla "$@"
   if ! [ -n "$NO_MCDR" ]; then
-    gen_mcdr "$@"
+    gen_mcdr_alpine "$@"
+    gen_mcdr_ubuntu "$@"
   fi
 }
 
