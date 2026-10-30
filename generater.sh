@@ -71,7 +71,8 @@ function gen_vanilla_ubuntu(){
 
 FROM ubuntu:latest
 
-RUN apt update && apt install openjdk-${_JAVA}-jre && \\
+RUN apt update
+RUN DEBIAN_FRONTEND=noninteractive apt install -y openjdk-${_JAVA}-jre && \\
   java -version
 
 WORKDIR /minecraft
