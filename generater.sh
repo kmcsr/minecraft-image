@@ -61,6 +61,37 @@ CMD []
 EOF
 }
 
+function gen_vanilla_ubuntu(){
+  _JAVA=$1
+  [ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
+  _FILE="java${_JAVA}-ubuntu${DOCKERFILE_SUFFIX}"
+  echo ">>> generating ${_FILE}"
+  cat >"$_FILE" <<EOF
+# syntax=docker/dockerfile:1
+
+FROM ubuntu:latest
+
+RUN apt update && apt install openjdk-${_JAVA}-jre && \\
+  java -version
+
+WORKDIR /minecraft
+
+COPY ${BASE_DIR}/entry_point.sh /root/entry_point.sh
+COPY ${BASE_DIR}/init_vanilla.sh /root/init.sh
+
+ENV COMMAND="/usr/bin/env java -jar"
+ENV ARGS=minecraft.jar
+
+COPY ./minecraft_installer.tmp /usr/local/bin/minecraft_installer
+RUN chmod 0755 /usr/local/bin/minecraft_installer
+
+STOPSIGNAL SIGINT
+
+ENTRYPOINT ["/root/entry_point.sh", "/root/init.sh"]
+CMD []
+EOF
+}
+
 function gen_mcdr_alpine(){
   _JAVA=$1
   [ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
@@ -68,8 +99,6 @@ function gen_mcdr_alpine(){
   echo ">>> generating ${_FILE}"
   cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1
-
-FROM craftmine/server-installer:latest AS server_installer
 
 FROM python:${PYTHON_VERSION}-alpine
 
@@ -111,25 +140,24 @@ EOF
 function gen_mcdr_ubuntu(){
   _JAVA=$1
   [ -n "$_JAVA" ] || _JAVA=$DEFAULT_JAVA
-  _FILE="java${_JAVA}-mcdr${MCDR_VERSION}${DOCKERFILE_SUFFIX}"
+  _FILE="java${_JAVA}-mcdr${MCDR_VERSION}-ubuntu${DOCKERFILE_SUFFIX}"
   echo ">>> generating ${_FILE}"
   cat >"$_FILE" <<EOF
 # syntax=docker/dockerfile:1
 
-FROM craftmine/server-installer:latest AS server_installer
+FROM ubuntu:latest
 
-FROM python:${PYTHON_VERSION}-alpine
+RUN apt update
 
-RUN apt-get update
-RUN apt-get install -y \\
-    python3-full \\
+RUN DEBIAN_FRONTEND=noninteractive apt install -y openjdk-${_JAVA}-jre && \\
+  java -version
+
+RUN DEBIAN_FRONTEND=noninteractive apt install -y \\
+    python3 \\
     python3-pip \\
   && \\
   pip3 install --break-system-packages 'mcdreforged~=${MCDR_VERSION}' && \\
   python3 --version
-
-RUN apt-get install -y openjdk-${_JAVA}-jre && \\
-  java -version
 
 WORKDIR /minecraft
 
@@ -150,7 +178,8 @@ EOF
 }
 
 function generate(){
-  gen_vanilla "$@"
+  gen_vanilla_alpine "$@"
+  gen_vanilla_ubuntu "$@"
   if ! [ -n "$NO_MCDR" ]; then
     gen_mcdr_alpine "$@"
     gen_mcdr_ubuntu "$@"
