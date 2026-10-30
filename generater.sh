@@ -71,6 +71,8 @@ function gen_vanilla_ubuntu(){
 
 FROM ubuntu:latest
 
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
 RUN apt update
 RUN DEBIAN_FRONTEND=noninteractive apt install -y openjdk-${_JAVA}-jre && \\
   java -version
@@ -147,6 +149,8 @@ function gen_mcdr_ubuntu(){
 # syntax=docker/dockerfile:1
 
 FROM ubuntu:latest
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN apt update
 
